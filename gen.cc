@@ -1,11 +1,14 @@
 #include <cstdio>
 #include <cstdlib>
 #include <vector>
+#include <iostream>
 
-const int maxn = 100;
-const int maxd = 10;
-const int maxv = (int)1e2;
-const int maxq = 10;
+typedef int Val;
+
+const int maxn = 10000;
+const int maxd = 20;
+const Val maxv = (Val)1e9;
+const int maxq = 1000;
 int n, D, q;
 
 inline int RandInt(int bound) {
@@ -18,14 +21,14 @@ int main() {
   D = RandInt(maxd);
   printf("%d %d\n", n, D);
 
-  std::vector<int> vec(D);
+  std::vector<Val> vec(D);
   for (int i = 0; i < n; i++) {
     //std::generate(vec.begin(), vec.end(), []{ return RandInt(maxv); });
     for (auto &v : vec)
-      v = RandInt(maxv);
+      v = RandInt((int)maxv);
     for (auto v : vec)
-      printf("%d ", v);
-    printf("\n");
+      std::cout << v << " ";
+    std::cout << std::endl;
   }
 
   q = RandInt(maxq);
@@ -34,11 +37,11 @@ int main() {
     int k = RandInt(n);
     //std::generate(vec.begin(), vec.end(), []{ return RandInt(maxv); });
     for (auto &v : vec)
-      v = RandInt(maxv);
+      v = RandInt((int)maxv);
     printf("%d", k);
     for (auto v : vec)
-      printf(" %d", v);
-    printf("\n");
+      std::cout << " " << v;
+    std::cout << std::endl;
   }
   return 0;
 }

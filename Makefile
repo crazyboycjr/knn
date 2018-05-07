@@ -1,5 +1,5 @@
 
-.PHONY: clean
+.PHONY: clean run
 
 CFLAGS  := -Wall -g -std=c++14
 INCLUDE = -I./
@@ -28,3 +28,5 @@ gen: gen.o
 clean:
 	rm -f *.o ${APPS}
 
+run: all
+	./gen | ./main

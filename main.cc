@@ -5,19 +5,22 @@
 #include "knn.h"
 #include "ndpoint.h"
 
+typedef double Val;
+
 const double eps = 1e-8;
 
 const int maxn = 1000;
 int n, D, q;
-int vec[maxn];
+Val vec[maxn];
 
 void PrintResult(auto rets) {
+  if (rets.size() > 100) return;
   std::cout << "[" << rets[0];
   for (size_t i = 1; i < rets.size(); i++) std::cout << "," << rets[i];
   std::cout << "]" << std::endl;
 }
 
-void CheckResult(NDPoint<int> *np, int K, auto rets, auto rets2) {
+void CheckResult(NDPoint<Val> *np, int K, auto rets, auto rets2) {
   assert(static_cast<size_t>(K) == rets.size());
   assert(static_cast<size_t>(K) == rets2.size());
   for (int i = 0; i < K; i++) {
@@ -30,16 +33,16 @@ int main() {
   std::ios::sync_with_stdio(false);
 
   std::cin >> n >> D;
-  IKNearestNeighbor<int> *knn = new KdTree<int>(D);
-  IKNearestNeighbor<int> *knn2 = new BruteForce<int>();
+  IKNearestNeighbor<Val> *knn = new KdTree<Val>(D);
+  IKNearestNeighbor<Val> *knn2 = new BruteForce<Val>();
 
   for (int i = 0; i < n; i++) {
     for (int i = 0; i < D; i++) {
       std::cin >> vec[i];
     }
-    NDPoint<int> *np = new NDPoint<int>(vec, D);
+    NDPoint<Val> *np = new NDPoint<Val>(vec, D);
     knn->AddPoint(np);
-    NDPoint<int> *np2 = new NDPoint<int>(*np);
+    NDPoint<Val> *np2 = new NDPoint<Val>(*np);
     knn2->AddPoint(np2);
   }
 
@@ -53,9 +56,9 @@ int main() {
     for (int i = 0; i < D; i++) {
       std::cin >> vec[i];
     }
-    NDPoint<int> *np = new NDPoint<int>(vec, D);
-    NDPoint<int> ret = knn->Nearest(np);
-    NDPoint<int> ret2 = knn2->Nearest(np);
+    NDPoint<Val> *np = new NDPoint<Val>(vec, D);
+    NDPoint<Val> ret = knn->Nearest(np);
+    NDPoint<Val> ret2 = knn2->Nearest(np);
     std::cout << ret << " " << ret2 << std::endl;
 
     auto rets = knn->KNearest(np, k);
@@ -65,5 +68,7 @@ int main() {
 
     CheckResult(np, k, rets, rets2);
   }
+
+  std::cout << "\033[1;32mPass test\033[0m" << std::endl;
   return 0;
 }
