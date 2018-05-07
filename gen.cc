@@ -20,7 +20,9 @@ int main() {
 
   std::vector<int> vec(D);
   for (int i = 0; i < n; i++) {
-    std::generate(vec.begin(), vec.end(), []{ return RandInt(maxv); });
+    //std::generate(vec.begin(), vec.end(), []{ return RandInt(maxv); });
+    for (auto &v : vec)
+      v = RandInt(maxv);
     for (auto v : vec)
       printf("%d ", v);
     printf("\n");
@@ -30,7 +32,9 @@ int main() {
   printf("%d\n", q);
   for (int i = 0; i < q; i++) {
     int k = RandInt(n);
-    std::generate(vec.begin(), vec.end(), []{ return RandInt(maxv); });
+    //std::generate(vec.begin(), vec.end(), []{ return RandInt(maxv); });
+    for (auto &v : vec)
+      v = RandInt(maxv);
     printf("%d", k);
     for (auto v : vec)
       printf(" %d", v);

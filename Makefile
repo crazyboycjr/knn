@@ -20,7 +20,7 @@ APPS    := main gen
 all: ${APPS}
 
 main: main.o
-	${LD} ${CFLAGS} ${LIB} -o $@ $^ ${LDLIBS} 
+	${LD} ${CFLAGS} ${LIB} -o $@ $^ ${LDLIBS}
 
 gen: gen.o
 	${LD} ${CFLAGS} ${LIB} -o $@ $^ ${LDLIBS} 

@@ -1,5 +1,6 @@
 #pragma once
 
+#include "knn.h"
 #include "ndpoint.h"
 #include <cstdio>
 #include <vector>
@@ -9,7 +10,7 @@
 #include <utility>
 
 template <typename V>
-class KdTree {
+class KdTree final : public IKNearestNeighbor<V> {
  public:
   struct Node {
     Node() {}
@@ -25,22 +26,24 @@ class KdTree {
     ReleaseNodes(root_);
   }
   explicit KdTree(int Dim) { Dim_ = Dim; }
-  void AddPoint(NDPoint<V> *np) {
+  void AddPoint(NDPoint<V> *np) override {
     points_.push_back(std::shared_ptr<NDPoint<V>>(np));
   }
-  void Build() {
+  void Build() override {
     root_ = BuildRecursive(0, points_.size(), 0);
   }
   /* TODO(cjr) return rvalue to avoid the copy */
-  NDPoint<V> Nearest(const NDPoint<V> *np) {
+  NDPoint<V> Nearest(const NDPoint<V> *np) override {
     double min_dist = 1e30;
     NDPoint<V> *ans = nullptr;
     _Nearest(root_, np, min_dist, &ans);
     return *ans;
   }
   /* TODO(cjr) return rvalue to avoid the copy */
-  std::vector<NDPoint<V>> KNearest(const NDPoint<V> *np, int K) {
+  std::vector<NDPoint<V>> KNearest(const NDPoint<V> *np, int K) override {
+    return std::vector<NDPoint<V>>(0);
   }
+
  private:
   void ReleaseNodes(Node *n) {
     if (n) {
@@ -124,6 +127,7 @@ class KdTree {
     _Nearest(n->rc, target, cur_dist, cur_p);
   }
 
+ private:
   int Dim_;
   struct Node *root_;
   std::vector<std::shared_ptr<NDPoint<V>>> points_;

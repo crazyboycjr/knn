@@ -2,6 +2,7 @@
 
 #include <valarray>
 #include <cmath>
+#include <iostream>
 
 template <typename V>
 struct NDPoint {
