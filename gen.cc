@@ -13,7 +13,7 @@ inline int RandInt(int bound) {
 }
 
 int main() {
-  srand(114514 + 2);
+  srand(114514 + 3);
   n = RandInt(maxn);
   D = RandInt(maxd);
   printf("%d %d\n", n, D);

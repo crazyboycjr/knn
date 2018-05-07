@@ -41,7 +41,20 @@ class KdTree final : public IKNearestNeighbor<V> {
   }
   /* TODO(cjr) return rvalue to avoid the copy */
   std::vector<NDPoint<V>> KNearest(const NDPoint<V> *np, int K) override {
-    return std::vector<NDPoint<V>>(0);
+    if (K > static_cast<int>(points_.size()))
+      K = static_cast<int>(points_.size());
+    std::vector<NDPoint<V>> rets;
+    auto cmp = [np](const NDPoint<V> *p1, const NDPoint<V> *p2) {
+        return np->distance(p1) < np->distance(p2);
+      };
+    std::priority_queue<NDPoint<V>*, std::vector<NDPoint<V>*>, decltype(cmp)> pq(cmp);
+    _KNearest(root_, np, K, pq);
+    while (!pq.empty()) {
+      rets.push_back(*pq.top());
+      pq.pop();
+    }
+    std::reverse(rets.begin(), rets.end());
+    return rets;
   }
 
  private:
@@ -52,6 +65,7 @@ class KdTree final : public IKNearestNeighbor<V> {
       delete n;
     }
   }
+  /* TODO(cjr) can be replace by std::nth_element */
   std::shared_ptr<NDPoint<V>> QuickSelect(int l, int r, int rank, int d) {
     int i = l, j = r;
     V mid = points_[(l + r) >> 1]->val[d];
@@ -83,6 +97,10 @@ class KdTree final : public IKNearestNeighbor<V> {
     if (l >= r) return nullptr;
     Node *n = new Node();
     std::pair<V, V> min_max = GetMinMax(l, r, d);
+    if (dep == 0) {
+      n->lef = min_max.first;
+      n->rig = min_max.second;
+    }
     n->p = QuickSelect(l, r, (r - l) >> 1, d);
     n->dep = dep;
     n->lc = BuildRecursive(l, mid, dep + 1);
@@ -111,20 +129,46 @@ class KdTree final : public IKNearestNeighbor<V> {
     }
     /* TODO(cjr) remote this % after profiling */
     int d = (n->dep - 1) % Dim_;
-    V tmp = 0;
+    double tmp = 0;
     if (target->val[d] < n->lef)
       tmp = n->lef - target->val[d];
     if (target->val[d] > n->rig)
       tmp = target->val[d] - n->rig;
     if (tmp > cur_dist)
       return;
-    tmp = target->distance(n->p.get());
+    std::cout << tmp << std::endl;
     if (tmp < cur_dist) {
       cur_dist = tmp;
       *cur_p = n->p.get();
     }
     _Nearest(n->lc, target, cur_dist, cur_p);
     _Nearest(n->rc, target, cur_dist, cur_p);
+  }
+  void _KNearest(Node *n, const NDPoint<V> *target, int K, auto &pq) {
+    if (n == nullptr)
+      return;
+    if (pq.size() < static_cast<size_t>(K)) {
+      pq.push(n->p.get());
+      _KNearest(n->lc, target, K, pq);
+      _KNearest(n->rc, target, K, pq);
+      return;
+    }
+    int d = (n->dep - 1) % Dim_;
+    double tmp = 0;
+    if (target->val[d] < n->lef)
+      tmp = n->lef - target->val[d];
+    if (target->val[d] > n->rig)
+      tmp = target->val[d] - n->rig;
+    double cur_dist = target->distance(pq.top());
+    if (tmp > cur_dist)
+      return;
+    tmp = target->distance(n->p.get());
+    if (tmp < cur_dist) {
+      pq.pop();
+      pq.push(n->p.get());
+    }
+    _KNearest(n->lc, target, K, pq);
+    _KNearest(n->rc, target, K, pq);
   }
 
  private:
