@@ -21,7 +21,7 @@ void CheckResult(NDPoint<int> *np, int K, auto rets, auto rets2) {
   assert(static_cast<size_t>(K) == rets.size());
   assert(static_cast<size_t>(K) == rets2.size());
   for (int i = 0; i < K; i++) {
-    printf("%.6f %.6f\n", np->distance(rets[i]), np->distance(rets2[i]));
+    //printf("%.6f %.6f\n", np->distance(rets[i]), np->distance(rets2[i]));
     assert(std::abs(np->distance(rets[i]) - np->distance(rets2[i])) < eps);
   }
 }

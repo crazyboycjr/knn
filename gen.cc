@@ -2,9 +2,9 @@
 #include <cstdlib>
 #include <vector>
 
-const int maxn = 10;
-const int maxd = 2;
-const int maxv = (int)1e1;
+const int maxn = 100;
+const int maxd = 10;
+const int maxv = (int)1e2;
 const int maxq = 10;
 int n, D, q;
 
