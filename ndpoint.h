@@ -14,6 +14,12 @@ struct NDPoint {
   NDPoint(V *data, size_t size) {
     val = std::valarray<V>(data, size);
   }
+  /**
+   * \breif construct from another NDPoint<V>
+   */
+  NDPoint(const NDPoint<V> &p) {
+    val = p.val;
+  }
   double distance(const NDPoint<V> &p) const {
     return std::sqrt(std::pow((val - p.val), 2).sum());
   }
